@@ -5,7 +5,6 @@
   "main": "./out/main/index.js",
   "author": "MyName",
   "homepage": "https://github.com/내아이디/quest-map",
-  
   "build": {
     "appId": "com.questmap.tracker",
     "productName": "QuestMapTracker",
@@ -19,7 +18,9 @@
     "mac": {
       "target": {
         "target": "dmg",
-        "arch": ["arm64"]
+        "arch": [
+          "arm64"
+        ]
       },
       "identity": null
     },
@@ -32,7 +33,6 @@
       "shortcutName": "Quest Map Tracker"
     }
   },
-
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -65,7 +65,7 @@
     "autoprefixer": "^10.4.20",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
-    "electron-vite": "^2.3.0",
+    "electron-vite": "^4.0.1",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",

@@ -1,10 +1,10 @@
 {
   "name": "quest-map",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My Character Quest Map Tracker",
   "main": "./out/main/index.js",
   "author": "MyName",
-  "homepage": "https://github.com/내아이디/quest-map",
+  "homepage": "https://github.com/Naheeria/quest-map",
   "build": {
     "appId": "com.questmap.tracker",
     "productName": "QuestMapTracker",

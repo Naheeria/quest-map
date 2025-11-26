@@ -1015,17 +1015,16 @@ const quitApp = () => {
                                 <div key={quest.id} className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                                     <div className="flex flex-col gap-2 mb-2">
                                         <div className="flex items-center gap-2">
-                                            <div className="relative">
+                                            {/* 1. 태그 버튼 (이전 수정 사항 유지) */}
+                                            <div className="relative shrink-0">
                                                 <button 
                                                     onClick={(e) => { e.stopPropagation(); setOpenTagDropdownId(openTagDropdownId === quest.id ? null : quest.id); }}
-                                                    // [수정 후] 텍스트와 패딩을 키워서 클릭하기 편하게 변경
-                                                    className={`text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border font-bold ${TagColor}`}
+                                                    className={`text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border font-bold whitespace-nowrap ${TagColor}`}
                                                 >
                                                     <TagIcon size={12}/> {TagLabel}
                                                 </button>
-                                                {/* 드롭다운 내부도 키움 */}
                                                 {openTagDropdownId === quest.id && (
-                                                    <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-xl p-1 grid grid-cols-1 z-50 w-32 animate-in fade-in zoom-in-95 duration-100">
+                                                    <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-xl p-1 grid grid-cols-1 z-50 w-max min-w-[100px] animate-in fade-in zoom-in-95 duration-100">
                                                         {Object.entries(TAG_CONFIG).map(([key, conf]) => {
                                                             const Icon = conf.icon;
                                                             return (
@@ -1036,7 +1035,7 @@ const quitApp = () => {
                                                                         setQuests(prev => prev.map(q => q.id === quest.id ? {...q, tag: key as QuestTag} : q));
                                                                         setOpenTagDropdownId(null);
                                                                     }} 
-                                                                    className="text-xs p-2 hover:bg-slate-100 text-left rounded flex items-center gap-2 text-slate-600"
+                                                                    className="text-xs p-2 hover:bg-slate-100 text-left rounded flex items-center gap-2 text-slate-600 whitespace-nowrap"
                                                                 >
                                                                     <Icon size={14}/> {conf.label}
                                                                 </button>
@@ -1045,8 +1044,17 @@ const quitApp = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <input type="text" value={quest.title} onChange={(e) => setQuests(prev => prev.map(q => q.id === quest.id ? {...q, title: e.target.value} : q))} className="text-sm font-bold text-slate-700 bg-transparent outline-none flex-1 border-b border-transparent focus:border-blue-300"/>
-                                            <div className="flex gap-1">
+
+                                            {/* 2. 입력창 수정: min-w-0 추가 (중요! 이게 있어야 태그가 커져도 입력창이 알아서 줄어듦) */}
+                                            <input 
+                                                type="text" 
+                                                value={quest.title} 
+                                                onChange={(e) => setQuests(prev => prev.map(q => q.id === quest.id ? {...q, title: e.target.value} : q))} 
+                                                className="text-sm font-bold text-slate-700 bg-transparent outline-none flex-1 min-w-0 border-b border-transparent focus:border-blue-300"
+                                            />
+
+                                            {/* 3. 버튼 그룹 수정: shrink-0 추가 (공간이 좁아져도 버튼이 찌그러지거나 밀려나지 않음) */}
+                                            <div className="flex gap-1 shrink-0">
                                                 <button onClick={() => setEditingQuestId(editingQuestId === quest.id ? null : quest.id)} className="p-1.5 bg-slate-100 text-slate-400 rounded-lg"><Edit3 size={14}/></button>
                                                 <button onClick={() => { if(confirm("삭제?")) setQuests(quests.filter(q => q.id !== quest.id)); }} className="p-1.5 bg-red-50 text-red-400 rounded-lg"><Trash2 size={14}/></button>
                                             </div>

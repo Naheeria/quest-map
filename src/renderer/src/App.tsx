@@ -327,7 +327,7 @@ export default function QuestMapTracker() {
       try {
         // [1] 아래 URL을 본인의 깃허브 주소로 변경해야 함!!
         // 형식: https://raw.githubusercontent.com/[내아이디]/[저장소이름]/main/version.json
-        const response = await fetch('https://raw.githubusercontent.com/YOUR_GITHUB_ID/quest-map/main/version.json');
+        const response = await fetch('https://raw.githubusercontent.com/Naheeria/quest-map/refs/heads/main/version.json');
         const data = await response.json();
         
         // [2] 기존 가짜 데이터(const data = {...}) 부분은 지우거나 주석 처리하세요.

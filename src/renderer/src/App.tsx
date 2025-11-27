@@ -4,7 +4,7 @@ import { Settings, Scroll, CheckCircle2, X, Sparkles, Plus, Trash2, Edit3, Targe
 
 // --- Constants & Types ---
 
-const CURRENT_APP_VERSION = "1.0.0";
+const CURRENT_APP_VERSION = "1.0.2";
 
 type QuestTag = 'Work' | 'Hobby' | 'SelfDev' | 'Health' | 'Etc';
 
@@ -727,7 +727,9 @@ const quitApp = () => {
               </div>
               <h2 className="text-xl font-black text-gray-800 mb-1">업데이트가 있어요!</h2>
               <p className="text-xs text-gray-500 mb-1">v{updateInfo.version}</p>
-              <p className="text-sm text-gray-600 mb-5 break-keep">{updateInfo.message || "포스타입에서 새로 받아주세요!"}</p>
+              <p className="text-sm text-gray-600 mb-5 break-keep whitespace-pre-wrap">
+                    {updateInfo.message || "포스타입에서 새로 받아주세요!"}
+                </p>
               
               <div className="flex flex-col gap-2">
                 <button onClick={handleGoToUpdate} className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-xl font-bold shadow-md transition-colors">
@@ -843,13 +845,36 @@ const quitApp = () => {
             </div>
         </div>
 
-        <div className="absolute top-4 right-12 z-30 w-40 pointer-events-none">
+        {/* Quest Info (Right) */}
+        <div className="absolute top-4 right-12 z-30 w-40 pointer-events-none no-drag">
             {focusedQuest ? (
-                <button onClick={() => setActiveModal('quests')} className="w-full bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm border-2 border-slate-100 text-left pointer-events-auto transition-transform hover:scale-105" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-                     <div className="flex justify-between items-center mb-1"><span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><Focus size={8} className="text-blue-400"/> FOCUS</span><span className="text-[8px] font-bold text-slate-400">{focusedQuest.currentStep + 1}/{focusedQuest.steps.length}</span></div>
-                     <div className="text-xs font-bold text-slate-700 truncate">{focusedQuest.title}</div>
+                <button 
+                    onClick={() => setActiveModal('quests')}
+                    className="w-full bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm border-2 border-slate-100 text-left pointer-events-auto transition-transform hover:scale-105"
+                >
+                     <div className="flex justify-between items-center mb-1">
+                         <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                             <Focus size={8} className="text-blue-400"/> FOCUS
+                         </span>
+                         <span className="text-[8px] font-bold text-slate-400">
+                             {Math.min(focusedQuest.currentStep + 1, focusedQuest.steps.length)}/{focusedQuest.steps.length}
+                         </span>
+                     </div>
+                     <div className="text-xs font-bold text-slate-700 truncate mb-0.5">{focusedQuest.title}</div>
+                     
+                     {/* [추가됨] 현재 진행 중인 단계 표시 */}
+                     <div className="text-[9px] text-slate-500 truncate flex items-center gap-1">
+                        <div className="w-1 h-1 rounded-full bg-blue-400 shrink-0 animate-pulse"/>
+                        {focusedQuest.currentStep < focusedQuest.steps.length 
+                            ? focusedQuest.steps[focusedQuest.currentStep].text 
+                            : "모든 임무 완료!"}
+                     </div>
                 </button>
-            ) : <div className="w-full bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm border-2 border-slate-100 text-center pointer-events-auto" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}><span className="text-[10px] font-bold text-slate-400">NO QUEST</span></div>}
+            ) : (
+                <div className="w-full bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm border-2 border-slate-100 text-center pointer-events-auto">
+                    <span className="text-[10px] font-bold text-slate-400">NO QUEST</span>
+                </div>
+            )}
         </div>
 
         <div className="absolute bottom-4 right-4 flex space-x-3 z-40" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
@@ -973,15 +998,29 @@ const quitApp = () => {
                                     </div>
                                     <div className="space-y-3">
                                         {quest.steps.map((step, idx) => (
-                                            <div key={step.id} className="flex items-center gap-3 cursor-pointer hover:bg-black/5 p-1 rounded" onClick={() => jumpToLocation(step.mapPosition)}>
-                                                <button disabled={quest.steps.every(s => s.isCompleted) || (!step.isCompleted && idx !== quest.currentStep)} onClick={(e) => { e.stopPropagation(); toggleStep(quest.id, step.id); }} className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center border-2 transition-all btn-bounce ${step.isCompleted ? 'bg-green-400 border-green-400 text-white' : idx === quest.currentStep ? 'bg-white border-yellow-400 text-yellow-500 shadow-md scale-110' : 'bg-slate-100 border-slate-200 text-slate-300'}`}>
+                                            // [수정됨] onClick에 jumpToLocation 연결 & 커서 포인터 추가
+                                            <div 
+                                                key={step.id} 
+                                                className="flex items-center gap-3 cursor-pointer hover:bg-slate-100 p-2 rounded-lg transition-colors group" 
+                                                onClick={() => jumpToLocation(step.mapPosition)}
+                                                title="클릭하여 이 위치로 이동"
+                                            >
+                                                <button 
+                                                    disabled={quest.steps.every(s => s.isCompleted) || (!step.isCompleted && idx !== quest.currentStep)} 
+                                                    onClick={(e) => { e.stopPropagation(); toggleStep(quest.id, step.id); }} 
+                                                    className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center border-2 transition-all btn-bounce ${step.isCompleted ? 'bg-green-400 border-green-400 text-white' : idx === quest.currentStep ? 'bg-white border-yellow-400 text-yellow-500 shadow-md scale-110' : 'bg-slate-100 border-slate-200 text-slate-300'}`}
+                                                >
                                                     {step.isCompleted ? <Undo2 size={16} /> : <CheckCircle2 size={16} strokeWidth={3} />}
                                                 </button>
                                                 <div className="flex-1">
                                                     <div className={`text-sm font-bold ${step.isCompleted ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{step.text}</div>
-                                                    <div className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
-                                                        {step.isCompleted ? '완료됨' : `+${step.expReward} EXP`}
-                                                        <span className="text-[8px] text-blue-400 bg-blue-50 px-1 rounded border border-blue-100">이동</span>
+                                                    <div className="text-[10px] text-slate-400 font-bold flex items-center gap-2 mt-0.5">
+                                                        <span>{step.isCompleted ? '완료됨' : `+${step.expReward} EXP`}</span>
+                                                        
+                                                        {/* [추가됨] 이동 가능함을 알리는 배지 (마우스 올리면 색상 변경) */}
+                                                        <span className="text-[9px] text-blue-400 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-1 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500 transition-colors">
+                                                            <LocateFixed size={8}/> 이동
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
